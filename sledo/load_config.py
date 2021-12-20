@@ -4,8 +4,8 @@ This is the "load_config" module.
 The load config helps to load and validate the sledo configuration files.
 """
 
-from schema import Or, Schema, And, Use, Optional, SchemaError
-from typing import Dict, AnyStr
+from schema import Or, Schema, Use, Optional, SchemaError
+from typing import Dict
 import yaml
 
 # The schema of a valid configuration file

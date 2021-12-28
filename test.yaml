@@ -1,22 +1,22 @@
 steps:
-  - type: Order
-    amount: 4
-  - type:
-      - Invoice: 0.95
+    - type: Order
+      # amount: 4
+    # - type:
+    #     Invoice: 0.95
 
 schemas:
-  Invoice:
-    order: Order
-    date:
-      type: Date
-      min: $order.date
+    Invoice:
+        order: Order
+        date:
+            type: date
+            min: $order.date
 
-  Order:
-    amount:
-      type: number
-      min: 2
-      max: 4
-    date:
-      type: Date
-      min: 2021-11-29
-      max: 2022-01-01
+    Order:
+        amount:
+            type: number
+            min: 2
+            max: 4
+        date:
+            type: date
+            min: 2021-11-29
+            max: 2022-01-01

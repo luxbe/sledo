@@ -4,6 +4,7 @@ This is the "load_config" module.
 The load config helps to load and validate the sledo configuration files.
 """
 
+import click
 from schema import Or, Schema, Use, Optional, SchemaError
 from typing import Dict
 import yaml
@@ -11,9 +12,9 @@ import yaml
 # The schema of a valid configuration file
 schema = Schema({
     'steps': [{
-        'type': Or(str, [{
-            str: lambda n: 0 <= n <= 1
-        }]),
+        'type': Or(str, {
+            str: Use(float)
+        }),
         Optional('amount'): Use(int)
     }],
     'schemas': {
@@ -47,5 +48,5 @@ def loadConfig(file: str) -> Dict:
         schema.validate(config)
         return config
     except SchemaError as e:
-        print("Config validation error:", e)
+        click.UsageError(e).show()
         exit(1)

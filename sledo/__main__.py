@@ -3,6 +3,7 @@ import click
 import os
 import csv
 from sledo import generators
+from sledo.exceptions import MissingSchemaError
 from sledo.load_config import loadConfig
 
 
@@ -56,8 +57,12 @@ def generate(file: str, outdir: str):
             exit(1)
 
         while step is not None:
-            # generates the schema from one step
-            (name, row) = generateSchemaFromStep(step, schemas, prev)
+            try:
+                # generates the schema from one step
+                (name, row) = generateSchemaFromStep(step, schemas, prev)
+            except MissingSchemaError as e:
+                click.UsageError(e).show()
+                exit(1)
 
             if csv_data.get(name) is None:
                 csv_data[name] = []
@@ -89,21 +94,23 @@ def generateSchemaFromStep(step: Dict, schemas: Dict, prev: Tuple[str, List]) ->
     schema: Dict | None = schemas.get(schema_name)
 
     if schema is None:
-        click.UsageError(f"Undefined schema '{schema_name}'").show()
-        exit(1)
+        raise MissingSchemaError(schema_name)
 
     def generateAttribute(key: str):
-        res = generators.generate(
-            schema.get(key),
-            schema_name,
-            key)
+        try:
+            res = generators.generate(
+                schema.get(key),
+                schema_name,
+                key)
+        except AttributeError as e:
+            click.UsageError(e).show()
+            exit(1)
 
         if res is not None:
             return res
 
         if (prev is None) or (prev[0] != schema.get(key)):
-            click.UsageError(f"Type '{prev[0]}' is not defined!").show()
-            exit(1)
+            raise MissingSchemaError(schema_name)
 
         return prev[1][0]
 

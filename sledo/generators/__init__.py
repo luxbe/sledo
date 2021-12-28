@@ -1,7 +1,6 @@
 
 from typing import Dict
 
-import click
 from sledo.generators.base import FieldGenerator
 from sledo.generators.date import DateGenerator
 

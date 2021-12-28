@@ -13,7 +13,7 @@ generator_dict: Dict[str, FieldGenerator] = {
 }
 
 
-def generate(field: dict):
+def generate(field: dict, schema_name:str, field_name:str):
     type = field.get("type")
     generator = generator_dict.get(type)
 
@@ -21,4 +21,4 @@ def generate(field: dict):
         click.UsageError(f"Can't find generator '{type}'").show()
         exit(1)
 
-    return generator.generate(field)
+    return generator.generate(field, schema_name, field_name)

@@ -3,9 +3,5 @@ from abc import ABC, abstractmethod
 
 class FieldGenerator(ABC):
     @abstractmethod
-    def id(self) -> str:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def generate(self, field: dict):
+    def generate(self, field: dict, schema_name:str, field_name:str):
         raise NotImplementedError()

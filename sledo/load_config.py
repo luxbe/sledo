@@ -21,7 +21,7 @@ schema = Schema({
         str: {
             str: Or(str, {
                 'type': str,
-                str: object
+                Optional(str): object
             })
         }
     }

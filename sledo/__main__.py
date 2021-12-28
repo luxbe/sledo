@@ -60,7 +60,7 @@ def generate(file: str, outdir: str):
 
         for key in keys:
             field = schema.get(key)
-            columns.append(generators.generate(field))
+            columns.append(generators.generate(field, schema_type, key))
 
         rows.append(columns)
 

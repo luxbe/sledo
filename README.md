@@ -26,6 +26,12 @@ pipenv install
 
 ## 💻 Develop
 
+## 📥 Install dependencies
+
+```bash
+pipenv install
+```
+
 ## 🛠️ Run sledo
 
 ```bash

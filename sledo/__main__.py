@@ -1,3 +1,4 @@
+from typing import Dict, List, Tuple
 import click
 import os
 import csv
@@ -19,8 +20,7 @@ def generate(file: str, outdir: str):
     # load the configuration file
     config = loadConfig(file)
 
-    # check if the out directory already exists
-
+    # check if the 'out'-directory already exists
     if os.path.isdir(outdir):
         # TODO: change to override check
         override = True
@@ -37,38 +37,78 @@ def generate(file: str, outdir: str):
             click.UsageError(e).show()
             exit(1)
 
-    steps = config.get("steps")
-    schemas = config.get("schemas")
+    initial: str = config.get("initial")
+    amount: int = config.get("amount")
+    steps: Dict = config.get("steps")
+    schemas: Dict = config.get("schemas")
 
-    # go through steps
-    for step in steps:
-        # find schema
-        schema_type = step.get("type")
+    # The data that should be written into the CSV-files later
+    csv_data: Dict[str, List[List]] = {}
 
-        if type(schema_type) is str:
-            schema = schemas.get(schema_type)
-        else:
-            # TODO: implement
-            click.echo("Oh no!")
+    for _ in range(amount):
 
-        keys = [
-            # "id",
-            *schema.keys()]
+        # start with initial step
+        step: Dict | None = steps.get(initial)
+        prev: Tuple[str, List] = None
 
-        rows = []
-        columns = []
+        if step == None:
+            click.ClickException(f"Unknown initial step '{step}'").show()
+            exit(1)
 
-        for key in keys:
-            field = schema.get(key)
-            columns.append(generators.generate(field, schema_type, key))
+        while step is not None:
+            # generates the schema from one step
+            (name, row) = generateSchemaFromStep(step, schemas, prev)
 
-        rows.append(columns)
+            if csv_data.get(name) is None:
+                csv_data[name] = []
 
-        path = os.path.join(outdir, f"{schema_type}.csv")
+            data_entry = csv_data.get(name)
+            row_with_id = [len(data_entry)+1, *row]
+
+            data_entry.append(row_with_id)
+
+            prev = (name, row_with_id)
+            step = steps.get(step.get("next"))
+
+    # write data to disk
+    for name in csv_data.keys():
+        path = os.path.join(outdir, f"{name}.csv")
+
         with open(path, "w", newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(keys)
-            writer.writerows(rows)
+            # TODO: write headers
+            writer.writerow(["id", *schemas.get(name).keys()])
+
+            # write rows
+            writer.writerows(csv_data.get(name))
+
+
+def generateSchemaFromStep(step: Dict, schemas: Dict, prev: Tuple[str, List]) -> Tuple[str, List]:
+    # find schema
+    schema_name = step.get("generate")
+    schema: Dict | None = schemas.get(schema_name)
+
+    if schema is None:
+        click.UsageError(f"Undefined schema '{schema_name}'").show()
+        exit(1)
+
+    def generateAttribute(key: str):
+        res = generators.generate(
+            schema.get(key),
+            schema_name,
+            key)
+
+        if res is not None:
+            return res
+
+        if (prev is None) or (prev[0] != schema.get(key)):
+            click.UsageError(f"Type '{prev[0]}' is not defined!").show()
+            exit(1)
+
+        return prev[1][0]
+
+    # generate schema
+    return (schema_name, map(generateAttribute, schema.keys()))
 
 
 cli.add_command(generate)

@@ -1,15 +1,20 @@
+initial: create_order
+amount: 5
+
 steps:
-    - type: Order
-      # amount: 4
-    # - type:
-    #     Invoice: 0.95
+    create_order:
+        generate: Order
+        next: create_invoice
+    create_invoice:
+        generate: Invoice
 
 schemas:
     Invoice:
-        order: Order
+        order_id: Order
         date:
             type: date
-            min: $order.date
+            min: 2022-01-01
+            max: 2022-01-31
 
     Order:
         amount:

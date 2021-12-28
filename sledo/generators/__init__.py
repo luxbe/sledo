@@ -13,12 +13,13 @@ generator_dict: Dict[str, FieldGenerator] = {
 }
 
 
-def generate(field: dict, schema_name:str, field_name:str):
-    type = field.get("type")
-    generator = generator_dict.get(type)
+def generate(field: str | dict, schema_name: str, field_name: str):
+    field_type = field if type(field) is str else field.get("type")
+    field_conf = {} if type(field) is str else field
+
+    generator = generator_dict.get(field_type)
 
     if generator is None:
-        click.UsageError(f"Can't find generator '{type}'").show()
-        exit(1)
+        return None
 
-    return generator.generate(field, schema_name, field_name)
+    return generator.generate(field_conf, schema_name, field_name)

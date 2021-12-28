@@ -11,12 +11,14 @@ import yaml
 
 # The schema of a valid configuration file
 schema = Schema({
-    'steps': [{
-        'type': Or(str, {
-            str: Use(float)
-        }),
-        Optional('amount'): Use(int)
-    }],
+    'initial': str,
+    'amount': int,
+    'steps': {
+        str: {
+            'generate': str,
+            Optional('next'): str
+        }
+    },
     'schemas': {
         str: {
             str: Or(str, {

@@ -1,9 +1,8 @@
-from typing import Dict, List, Tuple
-import click
 import os
 import csv
-from sledo import generators
-from sledo.exceptions import MissingSchemaError
+import click
+from schema import SchemaError
+from sledo.generate import generateByConfig
 from sledo.load_config import loadConfig
 
 
@@ -16,109 +15,47 @@ def cli():
 @click.argument("file")
 @click.option("-O", "--outdir", default="./out/", help="The out directory for the generated CSVs")
 def generate(file: str, outdir: str):
-    """Generates CSVs based on the given configuration file."""
-    click.echo(f"Config file: {file}\nOut directory: {outdir}")
     # load the configuration file
-    config = loadConfig(file)
+    if os.path.isfile(file):
+        try:
+            config = loadConfig(file)
+        except Exception as e:
+            raise click.UsageError(e)
+    else:
+        raise click.UsageError(f"File does not exist: '{file}'")
 
     # check if the 'out'-directory already exists
     if os.path.isdir(outdir):
         # TODO: change to override check
         override = True
-        # override = click.confirm(f"The directory '{outdir}' already exists. Do you want to override it?", default=False, abort=False, prompt_suffix=": ", show_default=True, err=False)
+        # override = click.confirm(f"The directory '{outdir}' already exists. Do you want to overwrite it?", default=False, abort=False, prompt_suffix=": ", show_default=True, err=False)
 
         if not override:
-            click.echo("Process aborted")
-            exit(1)
+            raise click.UsageError("Process aborted")
     # try to create the directory
     else:
         try:
             os.mkdir(outdir)
         except OSError as e:
-            click.UsageError(e).show()
-            exit(1)
+            raise click.UsageError(e)
 
-    initial: str = config.get("initial")
-    amount: int = config.get("amount")
-    steps: Dict = config.get("steps")
-    schemas: Dict = config.get("schemas")
-
-    # The data that should be written into the CSV-files later
-    csv_data: Dict[str, List[List]] = {}
-
-    for _ in range(amount):
-
-        # start with initial step
-        step: Dict | None = steps.get(initial)
-        prev: Tuple[str, List] = None
-
-        if step == None:
-            click.ClickException(f"Unknown initial step '{step}'").show()
-            exit(1)
-
-        while step is not None:
-            try:
-                # generates the schema from one step
-                (name, row) = generateSchemaFromStep(step, schemas, prev)
-            except MissingSchemaError as e:
-                click.UsageError(e).show()
-                exit(1)
-
-            if csv_data.get(name) is None:
-                csv_data[name] = []
-
-            data_entry = csv_data.get(name)
-            row_with_id = [len(data_entry)+1, *row]
-
-            data_entry.append(row_with_id)
-
-            prev = (name, row_with_id)
-            step = steps.get(step.get("next"))
+    generated_data = generateByConfig(config)
 
     # write data to disk
-    for name in csv_data.keys():
-        path = os.path.join(outdir, f"{name}.csv")
+    for key in generated_data.keys():
+        path = os.path.join(outdir, f"{key}.csv")
 
         with open(path, "w", newline='') as file:
             writer = csv.writer(file)
-            # TODO: write headers
-            writer.writerow(["id", *schemas.get(name).keys()])
+            schema = generated_data.get(key)
 
-            # write rows
-            writer.writerows(csv_data.get(name))
+            # write header
+            writer.writerow(schema[0])
 
+            # write content
+            writer.writerows(schema[1])
 
-def generateSchemaFromStep(step: Dict, schemas: Dict, prev: Tuple[str, List]) -> Tuple[str, List]:
-    # find schema
-    schema_name = step.get("generate")
-    schema: Dict | None = schemas.get(schema_name)
-
-    if schema is None:
-        raise MissingSchemaError(schema_name)
-
-    def generateAttribute(key: str):
-        try:
-            res = generators.generate(
-                schema.get(key),
-                schema_name,
-                key)
-        except AttributeError as e:
-            click.UsageError(e).show()
-            exit(1)
-
-        if res is not None:
-            return res
-
-        if (prev is None) or (prev[0] != schema.get(key)):
-            raise MissingSchemaError(schema_name)
-
-        return prev[1][0]
-
-    # generate schema
-    return (schema_name, map(generateAttribute, schema.keys()))
-
-
-cli.add_command(generate)
 
 if __name__ == '__main__':
+    cli.add_command(generate)
     cli()

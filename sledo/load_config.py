@@ -30,6 +30,16 @@ schema = Schema({
 })
 
 
+def validateConfig(config: Dict):
+    schema.validate(config)
+
+    # TODO: validate inital_step exists
+    # if step == None: raise MissingStepError(initial_step)
+    # TODO: validate schemas exist
+    # TODO: validate type exist
+    # TODO: validate fields
+
+
 def loadConfig(file: str) -> Dict:
     """
     Loads the configuration file and validates its contents
@@ -45,10 +55,7 @@ def loadConfig(file: str) -> Dict:
     with open(file) as f:
         config: Dict = yaml.load(f, Loader=yaml.FullLoader)
 
-    # validate the loaded configuration file
-    try:
-        schema.validate(config)
+        # validate the loaded configuration file
+        validateConfig(config)
+
         return config
-    except SchemaError as e:
-        click.UsageError(e).show()
-        exit(1)

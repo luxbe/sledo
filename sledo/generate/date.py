@@ -1,7 +1,7 @@
 from datetime import timedelta
 from random import randrange
 from sledo.exceptions import MissingAttributeError, AttributeError
-from sledo.generators.base import FieldGenerator
+from sledo.generate.base import FieldGenerator
 
 
 class DateGenerator(FieldGenerator):

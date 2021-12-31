@@ -1,0 +1,27 @@
+initial: create_order
+amount: 5
+
+steps:
+    create_order:
+        generate: Order
+        next: create_invoice
+    create_invoice:
+        generate: Invoice
+
+schemas:
+    Invoice:
+        order: Order
+        date:
+            type: date
+            min: $order.date
+            max: 2022-01-31
+
+    Order:
+        amount:
+            type: number
+            min: 2
+            max: 4
+        date:
+            type: date
+            min: 2021-12-30
+            max: 2021-12-31

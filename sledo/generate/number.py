@@ -1,6 +1,6 @@
 from random import randrange
 from sledo.exceptions import MissingAttributeError
-from sledo.generators.base import FieldGenerator
+from sledo.generate.base import FieldGenerator
 
 
 class NumberGenerator(FieldGenerator):

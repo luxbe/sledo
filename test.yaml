@@ -10,7 +10,7 @@ steps:
 
 schemas:
     Invoice:
-        order_id: Order
+        order: Order
         date:
             type: date
             min: 2022-01-01

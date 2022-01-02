@@ -1,9 +1,6 @@
 import os
-import csv
 import click
-from schema import SchemaError
-from sledo.generate import generateByConfig
-from sledo.load_config import loadConfig
+from sledo.generate import main as generate_main
 
 
 @click.group()
@@ -15,13 +12,7 @@ def cli():
 @click.argument("file")
 @click.option("-O", "--outdir", default="./out/", help="The out directory for the generated CSVs")
 def generate(file: str, outdir: str):
-    # load the configuration file
-    if os.path.isfile(file):
-        try:
-            config = loadConfig(file)
-        except Exception as e:
-            raise click.UsageError(e)
-    else:
+    if not os.path.isfile(file):
         raise click.UsageError(f"File does not exist: '{file}'")
 
     # check if the 'out'-directory already exists
@@ -39,21 +30,7 @@ def generate(file: str, outdir: str):
         except OSError as e:
             raise click.UsageError(e)
 
-    generated_data = generateByConfig(config)
-
-    # write data to disk
-    for key in generated_data.keys():
-        path = os.path.join(outdir, f"{key}.csv")
-
-        with open(path, "w", newline='') as file:
-            writer = csv.writer(file)
-            schema = generated_data.get(key)
-
-            # write header
-            writer.writerow(schema[0])
-
-            # write content
-            writer.writerows(schema[1])
+    generate_main(file, outdir)
 
 
 if __name__ == '__main__':

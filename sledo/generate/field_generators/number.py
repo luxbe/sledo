@@ -21,8 +21,12 @@ class NumberFieldGenerator(FieldGenerator):
     def generate(self):
         min: float = self.options["min"]
         max: float = self.options["max"]
-        digits: int = self.options["digits"]
 
         random_value = (random() * (max - min)) + min
 
-        return f"{random_value:.{digits}f}"
+        return random_value
+
+    def generate_str(self) -> str:
+        digits: int = self.options["digits"]
+        value = self.generate()
+        return f"{value:.{digits}f}"

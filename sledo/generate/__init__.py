@@ -32,7 +32,7 @@ def main(file: str, outdir: str):
             writer.writerows(schema[1])
 
 
-def generateByConfig(config: Dict) -> Dict[str, Tuple[List[str], List[List]]]:
+def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
     """Generates the data based on the configuration file
 
         Params:
@@ -42,7 +42,7 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[List[str], List[List]]]:
             data (Dict): the generated data by name and rows
     """
 
-    res: Dict[str, Tuple[List[str], List[List]]] = {}
+    res: Dict[str, Tuple[Tuple, List[List]]] = {}
 
     amount: int = config.get("amount", 1)
     steps: Dict = config.get("steps")
@@ -53,13 +53,13 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[List[str], List[List]]]:
 
         # get initial step
         step: Dict = steps.get(initial_step)
-        step_res: Dict[str, Tuple[List[str], List[List]]] = {}
+        step_res: Dict[str, Tuple[Tuple, List[List]]] = {}
 
         while step is not None:
             # get schema data
             schema_name: str = step.get("generate")
             schema: Dict[str, FieldGenerator] = schemas.get(schema_name)
-            header = ["id", *schema.keys()]
+            header = ("id", *schema.keys())
 
             # initialize schema entry
             if step_res.get(schema_name) is None:
@@ -72,9 +72,9 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[List[str], List[List]]]:
             # generate values
             for field in schema.values():
                 if isinstance(field, SchemaFieldGenerator):
-                    value = field.generate(step_res)
+                    value = field.generate_str(step_res)
                 elif isinstance(field, FieldGenerator):
-                    value = field.generate()
+                    value = field.generate_str()
                 else:
                     raise Exception(f"Unknown field:\n{field}")
                 schema_values.append(value)
@@ -92,18 +92,3 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[List[str], List[List]]]:
                 res[key][1].append(*value[1])
 
     return res
-
-
-def generateFromStep(step: Dict, schemas: Dict, res: Dict[str, Tuple[List[str], List[List]]]):
-    schema_name: str = step.get("generate")
-    schema: Dict = schemas.get(schema_name)
-
-    header = ["id", *schema.keys()]
-
-    # initialize schema result
-    if res.get(schema_name) is None:
-        res[schema_name] = (header, [])
-
-    schema_values: List = [len(res[schema_name][1]) + 1]
-
-    res[schema_name][1].append(schema_values)

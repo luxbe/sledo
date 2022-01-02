@@ -1,10 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict
+from typing import Any, Dict, Tuple
 
 
 class FieldGenerator(object, metaclass=ABCMeta):
-    # @abstractmethod
-    def __init__(self, options: Dict[str, str], type: str):
+    def __init__(self, options: Dict[str, str] = None, type: str = None):
         super(FieldGenerator, self).__init__()
         self.options = options
         self.type = type
@@ -17,3 +16,6 @@ class FieldGenerator(object, metaclass=ABCMeta):
     @abstractmethod
     def generate(self):
         raise NotImplementedError()
+
+    def generate_str(self, *args) -> str:
+        return str(self.generate(*args))

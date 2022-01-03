@@ -9,6 +9,7 @@ from typing import Dict
 import yaml
 
 from sledo.generate.field_generators.base import FieldGenerator
+from sledo.generate.field_generators.reference import ReferenceFieldGenerator
 from sledo.generate.field_generators.schema import SchemaFieldGenerator
 from .field_generators import getGeneratorFromFieldType
 
@@ -40,7 +41,26 @@ class ConfigurationSchema(Schema):
                     ref = schemas.get(value.type)
                     if ref is None:
                         raise SchemaError(f"Missing schema: {value.type}")
+                elif isinstance(value, FieldGenerator):
+                    for (key, value) in value.options.items():
+                        if isinstance(value, ReferenceFieldGenerator):
+                            ref_field = schema.get(value.options["field"])
+                            if ref_field is None:
+                                raise SchemaError(
+                                    f"Missing attribute: {value.options['field']}")
 
+                            if not isinstance(ref_field, SchemaFieldGenerator):
+                                raise SchemaError(
+                                    f"Attribute {value.options['field']} must be a schema reference!")
+
+                            value.type = ref_field.type
+                            ref_schema = schemas.get(ref_field.type)
+                            ref_schema_field = ref_schema.get(
+                                value.options["field_attr"])
+
+                            if ref_schema_field is None:
+                                raise SchemaError(
+                                    f"Attribute {value.options['field_attr']} does not exist in schema {ref_field.type}")
         return data
 
 

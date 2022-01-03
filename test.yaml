@@ -1,5 +1,5 @@
 initial: create_order
-amount: 5
+amount: 10
 
 steps:
     create_order:
@@ -13,8 +13,8 @@ schemas:
         order: Order
         date:
             type: date
-            min: 2022-01-01
-            max: 2022-01-31
+            min: $order.date
+            max: $order.date
 
     Order:
         amount:
@@ -23,5 +23,5 @@ schemas:
             max: 4
         date:
             type: date
-            min: 2021-12-30
+            min: 2021-12-20
             max: 2021-12-31

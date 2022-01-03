@@ -1,4 +1,5 @@
-from typing import Dict, Tuple, List
+from types import FunctionType
+from typing import Any, Dict, Tuple, List
 import os
 import csv
 
@@ -53,7 +54,8 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
 
         # get initial step
         step: Dict = steps.get(initial_step)
-        iter_res: Dict[str, Tuple[Tuple, List[List]]] = {}
+        iter_res: Dict[str, Tuple[Tuple,
+                                  List[List[Tuple[Any, FunctionType]]]]] = {}
 
         while step is not None:
             # get schema data
@@ -67,17 +69,15 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
             # initialize schema values with id
             id = 1 if res.get(schema_name) is None else len(
                 res[schema_name][1]) + 1
-            schema_values: List = [id]
+            schema_values: List[Tuple[Any, FunctionType]] = [(id, str)]
 
             # generate values
             for field in schema.values():
-                if isinstance(field, SchemaFieldGenerator):
-                    value = field.generate_str(iter_res)
-                elif isinstance(field, FieldGenerator):
-                    value = field.generate_str()
+                if isinstance(field, FieldGenerator):
+                    value = field.generate(iter_res)
+                    schema_values.append((value, field.val_to_str))
                 else:
                     raise Exception(f"Unknown field:\n{field}")
-                schema_values.append(value)
 
             iter_res[schema_name][1].append(schema_values)
 
@@ -87,8 +87,9 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
         # add iteration data to complete data
         for key, value in iter_res.items():
             if res.get(key) is None:
-                res[key] = value
+                res[key] = (value[0], [list(
+                    map(lambda gen: gen[1](gen[0]), *value[1]))])
             else:
-                res[key][1].append(*value[1])
+                res[key][1].append(map(lambda gen: gen[1](gen[0]), *value[1]))
 
     return res

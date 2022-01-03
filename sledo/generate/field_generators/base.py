@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict
+from typing import Any, Dict, List, Tuple
+
+from sledo.generate.field_generators.reference import ReferenceFieldGenerator
 
 
 class FieldGenerator(object, metaclass=ABCMeta):
@@ -14,8 +16,21 @@ class FieldGenerator(object, metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def generate(self):
+    def generate(self, res: Dict[str, Tuple[Tuple, List[List]]]):
         raise NotImplementedError()
 
-    def generate_str(self, *args) -> str:
-        return str(self.generate(*args))
+    def val_to_str(self, value: Any) -> str:
+        return str(value)
+
+    def prepare_options(self, res: Dict[str, Tuple[Tuple, List[List]]]):
+        options = self.options.copy()
+        for (key, value) in self.options.items():
+            if not isinstance(value, ReferenceFieldGenerator):
+                continue
+
+            schema = res[value.type]
+            index = schema[0].index(value.options["field_attr"])
+
+            options[key] = schema[1][-1][index][0]
+
+        return options

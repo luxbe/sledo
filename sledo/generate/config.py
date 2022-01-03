@@ -21,6 +21,8 @@ class ConfigurationSchema(Schema):
         if not _is_config_schema:
             return data
 
+        # TODO: validate initial step
+
         # validate next steps
         steps: Dict[str, Dict[str, str]] = data["steps"]
         for step in steps.values():

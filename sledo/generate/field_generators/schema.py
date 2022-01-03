@@ -1,11 +1,11 @@
 from typing import Dict, List, Tuple
-from schema import Forbidden, Schema
+from schema import Schema
 
 from .base import FieldGenerator
 
 
 class SchemaFieldGenerator(FieldGenerator):
-    option_schema = Schema(None)
+    option_schema = Schema({})
 
     def validate(self):
         self.option_schema.validate(self.options)
@@ -16,4 +16,5 @@ class SchemaFieldGenerator(FieldGenerator):
         if schema is None:
             raise Exception(f"Schema '{self.type}' is not generated yet")
 
+        # return id of latest schema
         return schema[1][-1][0]

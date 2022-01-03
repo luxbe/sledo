@@ -11,7 +11,7 @@ class TestSchemaFieldGenerator(unittest.TestCase):
     def test_validation_unknown_keys(self):
         with self.assertRaises(SchemaError) as ctx:
             SchemaFieldGenerator({"invalid": "invalid"})
-        self.assertTrue("None does not match" in ctx.exception.code,
+        self.assertTrue("Wrong key" in ctx.exception.code,
                         "No options should be passed")
 
     def test_generation(self):

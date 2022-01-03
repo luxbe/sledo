@@ -44,16 +44,16 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
 
     res: Dict[str, Tuple[Tuple, List[List]]] = {}
 
-    amount: int = config.get("amount", 1)
+    iter_amount: int = config.get("amount", 1)
     steps: Dict = config.get("steps")
     initial_step: str = config.get("initial")
     schemas: Dict[str, Dict[str, FieldGenerator]] = config.get("schemas")
 
-    for _ in range(amount):
+    for _ in range(iter_amount):
 
         # get initial step
         step: Dict = steps.get(initial_step)
-        step_res: Dict[str, Tuple[Tuple, List[List]]] = {}
+        iter_res: Dict[str, Tuple[Tuple, List[List]]] = {}
 
         while step is not None:
             # get schema data
@@ -62,8 +62,8 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
             header = ("id", *schema.keys())
 
             # initialize schema entry
-            if step_res.get(schema_name) is None:
-                step_res[schema_name] = (header, [])
+            if iter_res.get(schema_name) is None:
+                iter_res[schema_name] = (header, [])
             # initialize schema values with id
             id = 1 if res.get(schema_name) is None else len(
                 res[schema_name][1]) + 1
@@ -72,20 +72,20 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
             # generate values
             for field in schema.values():
                 if isinstance(field, SchemaFieldGenerator):
-                    value = field.generate_str(step_res)
+                    value = field.generate_str(iter_res)
                 elif isinstance(field, FieldGenerator):
                     value = field.generate_str()
                 else:
                     raise Exception(f"Unknown field:\n{field}")
                 schema_values.append(value)
 
-            step_res[schema_name][1].append(schema_values)
+            iter_res[schema_name][1].append(schema_values)
 
             # advance to next step
             step = steps.get(step.get("next"))
 
-        # add step data to complete data
-        for key, value in step_res.items():
+        # add iteration data to complete data
+        for key, value in iter_res.items():
             if res.get(key) is None:
                 res[key] = value
             else:

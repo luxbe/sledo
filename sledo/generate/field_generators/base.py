@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, Tuple
+from typing import Dict
 
 
 class FieldGenerator(object, metaclass=ABCMeta):
-    def __init__(self, options: Dict[str, str] = None, type: str = None):
+    def __init__(self, options: Dict[str, str] = {}, type: str = None):
         super(FieldGenerator, self).__init__()
         self.options = options
         self.type = type

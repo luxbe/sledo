@@ -22,12 +22,12 @@ class TestDateFieldGenerator(unittest.TestCase):
             DateFieldGenerator({"min": "a", "max": 0})
             DateFieldGenerator({"min": "2020/29/29", "max": []})
 
-    def test_validation_key_relation(self):
-        DateFieldGenerator({"min": "2020-01-01", "max": "2020-01-10"})
-        DateFieldGenerator({"min": "2020-01-01", "max": "2020-01-01"})
+    # def test_validation_key_relation(self):
+    #     DateFieldGenerator({"min": "2020-01-01", "max": "2020-01-10"})
+    #     DateFieldGenerator({"min": "2020-01-01", "max": "2020-01-01"})
 
-        with self.assertRaises(SchemaError) as ctx:
-            DateFieldGenerator({"min": "2020-01-10", "max": "2020-01-01"})
+    #     with self.assertRaises(SchemaError) as ctx:
+    #         DateFieldGenerator({"min": "2020-01-10", "max": "2020-01-01"})
 
     def test_generation(self):
         generator = DateFieldGenerator(

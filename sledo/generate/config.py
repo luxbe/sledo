@@ -22,36 +22,55 @@ class ConfigurationSchema(Schema):
         if not _is_config_schema:
             return data
 
-        # TODO: validate initial step
-
-        # validate next steps
         steps: Dict[str, Dict[str, str]] = data["steps"]
-        for step in steps.values():
-            next = step.get("next")
-            if next is not None and steps.get(next) is None:
-                raise SchemaError(f"Missing step: {next}")
-
-        # validate properties
         schemas: Dict[str, Dict[str, FieldGenerator]] = data["schemas"]
 
+        # validate initial step
+        if steps.get(data["initial"]) is None:
+            raise SchemaError(f"Missing step: '{data['initial']}'")
+
+        # validate next steps
+        for (key, step) in steps.items():
+            next = step.get("next")
+            if next is not None and steps.get(next) is None:
+                raise SchemaError(f"Missing step: '{next}'")
+
+            generate: str | Dict = step.get("generate")
+
+            if type(generate) is str:
+                if schemas.get(generate) is None:
+                    raise SchemaError(f"Missing schema: '{schema}'")
+            else:
+                total_prob = 0
+                for (schema, prob) in generate.items():
+                    if schemas.get(schema) is None:
+                        raise SchemaError(f"Missing schema: '{schema}'")
+
+                    total_prob += prob
+
+                if total_prob > 1:
+                    raise SchemaError(
+                        f"The total probability must not be more than 1 at step: '{key}'")
+
+        # validate properties
         for schema in schemas.values():
-            for (key, value) in schema.items():
+            for value in schema.values():
                 if isinstance(value, SchemaFieldGenerator):
                     # check if Schema exists
                     ref = schemas.get(value.type)
                     if ref is None:
-                        raise SchemaError(f"Missing schema: {value.type}")
+                        raise SchemaError(f"Missing schema: '{value.type}'")
                 elif isinstance(value, FieldGenerator):
-                    for (key, value) in value.options.items():
+                    for value in value.options.values():
                         if isinstance(value, ReferenceFieldGenerator):
                             ref_field = schema.get(value.options["field"])
                             if ref_field is None:
                                 raise SchemaError(
-                                    f"Missing attribute: {value.options['field']}")
+                                    f"Missing attribute: '{value.options['field']}'")
 
                             if not isinstance(ref_field, SchemaFieldGenerator):
                                 raise SchemaError(
-                                    f"Attribute {value.options['field']} must be a schema reference!")
+                                    f"Attribute '{value.options['field']}' must be a schema reference!")
 
                             value.type = ref_field.type
                             ref_schema = schemas.get(ref_field.type)
@@ -60,7 +79,7 @@ class ConfigurationSchema(Schema):
 
                             if ref_schema_field is None:
                                 raise SchemaError(
-                                    f"Attribute {value.options['field_attr']} does not exist in schema {ref_field.type}")
+                                    f"Attribute '{value.options['field_attr']}' does not exist in schema {ref_field.type}")
         return data
 
 
@@ -82,7 +101,9 @@ schema = ConfigurationSchema({
     'amount': Use(int),
     'steps': {
         str: {
-            "generate": str,
+            "generate": Or(str, {
+                str: And(Use(float), lambda x: 0 <= x <= 1)
+            }),
             Optional("next"): str
         }
     },

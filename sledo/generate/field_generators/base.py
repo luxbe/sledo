@@ -16,7 +16,7 @@ class FieldGenerator(object, metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def generate(self, res: Dict[str, Tuple[Tuple, List[List]]]):
+    def generate(self, res: Dict[str, Tuple[Tuple, List[List]]] = {}):
         raise NotImplementedError()
 
     def val_to_str(self, value: Any) -> str:

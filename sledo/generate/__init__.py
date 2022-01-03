@@ -1,3 +1,4 @@
+from random import random
 from types import FunctionType
 from typing import Any, Dict, Tuple, List
 import os
@@ -59,7 +60,25 @@ def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[str], List[List]]]:
 
         while step is not None:
             # get schema data
-            schema_name: str = step.get("generate")
+            generate: str | Dict = step.get("generate")
+
+            if type(generate) is str:
+                schema_name = generate
+            else:
+                rand = random()
+                total = 0
+                schema_name = None
+
+                for (key, value) in generate.items():
+                    if (value + total) >= rand:
+                        schema_name = key
+                        break
+                    total += value
+
+            if schema_name is None:
+                step = steps.get(step.get("next"))
+                continue
+
             schema: Dict[str, FieldGenerator] = schemas.get(schema_name)
             header = ("id", *schema.keys())
 

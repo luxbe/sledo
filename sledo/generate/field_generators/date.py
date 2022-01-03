@@ -19,7 +19,7 @@ class DateFieldGenerator(FieldGenerator):
         #     raise SchemaError(
         #         f"'max' ({self.options['max']}) must be equal or larger than 'min' ({self.options['min']})")
 
-    def generate(self, res):
+    def generate(self, res={}):
         options = self.prepare_options(res)
         min = options["min"]
         max = options["max"]

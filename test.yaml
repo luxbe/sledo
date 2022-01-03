@@ -1,12 +1,13 @@
 initial: create_order
-amount: 10
+amount: 100
 
 steps:
     create_order:
         generate: Order
         next: create_invoice
     create_invoice:
-        generate: Invoice
+        generate:
+            Invoice: 0.8
 
 schemas:
     Invoice:

@@ -17,10 +17,10 @@ class TestSchemaFieldGenerator(unittest.TestCase):
     def test_generation(self):
         step_res = {
             "Test1": (("id", "amount", "date"), [
-                [2, 6, date(2020, 1, 20)],
+                [(2, str), (6, str), (date(2020, 1, 20), str)],
             ]),
             "Test2": (("id", "amount", "date"), [
-                [4, 3, date(2020, 2, 18)],
+                [(4, str), (3, str), (date(2020, 2, 18), str)],
             ]),
         }
 

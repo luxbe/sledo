@@ -41,5 +41,5 @@ pipenv run python -m sledo
 ## 🔬 Run tests
 
 ```bash
-pipenv run python -m tests
+python -m unittest discover tests
 ```

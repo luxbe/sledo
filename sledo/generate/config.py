@@ -39,7 +39,7 @@ class ConfigurationSchema(Schema):
 
             if type(generate) is str:
                 if schemas.get(generate) is None:
-                    raise SchemaError(f"Missing schema: '{schema}'")
+                    raise SchemaError(f"Missing schema: '{generate}'")
             else:
                 total_prob = 0
                 for (schema, prob) in generate.items():

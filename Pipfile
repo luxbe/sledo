@@ -4,7 +4,9 @@ pyyaml = "*"
 schema = "*"
 
 [dev-packages]
-autopep8 = "*"
+coverage = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.10"

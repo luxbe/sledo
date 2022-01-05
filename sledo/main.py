@@ -5,7 +5,7 @@ from .generate import main as generate_main
 
 
 @click.group()
-def cli():
+def cli():  # pragma: no cover
     pass
 
 
@@ -33,5 +33,5 @@ def generate(file: str, outdir: str):
 
 cli.add_command(generate)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     cli()

@@ -24,13 +24,13 @@ Sledo is a tool to automatically generate connected demo data.
 ### pip
 
 ```bash
-pip install sledo
+$ pip install sledo
 ```
 
 ### Github
 
 ```bash
-pip install git+https://github.com/luxbe/sledo.git
+$ pip install git+https://github.com/luxbe/sledo.git
 ```
 
 ## Quickstart
@@ -50,21 +50,21 @@ $ sledo generate config.yaml
 ### Install dependencies
 
 ```bash
-git clone https://github.com/luxbe/sledo.git
-cd sledo
-pipenv install
+$ git clone https://github.com/luxbe/sledo.git
+$ cd sledo
+$ pipenv install
 ```
 
 ### Run sledo
 
 ```bash
-pipenv run python sledo/__init__.py generate
+$ pipenv run python sledo/__init__.py generate
 ```
 
 ### Run tests
 
 ```bash
-pytest -v --cov=sledo --cov-report html
+$ pytest -v --cov=sledo --cov-report html
 ```
 
 ## License

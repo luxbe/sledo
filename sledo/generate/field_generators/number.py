@@ -1,9 +1,8 @@
 from typing import Any
-from schema import Or, Schema, SchemaError, Use, Optional
+from schema import Or, Schema, Use, Optional
 from random import random
 
-from sledo.generate.field_generators.reference import to_ref
-
+from .reference import to_ref
 from .base import FieldGenerator
 
 

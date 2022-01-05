@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List, Tuple
 
-from sledo.generate.field_generators.reference import ReferenceFieldGenerator
+from .reference import ReferenceFieldGenerator
 
 
 class FieldGenerator(object, metaclass=ABCMeta):

@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from schema import Or, Schema, SchemaError, Use
+from schema import Or, Schema, Use
 from random import randint
 
 from .reference import to_ref

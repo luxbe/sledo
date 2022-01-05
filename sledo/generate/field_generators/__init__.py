@@ -1,6 +1,6 @@
 from typing import Dict
 
-from sledo.generate.field_generators.schema import SchemaFieldGenerator
+from .schema import SchemaFieldGenerator
 from .base import FieldGenerator
 from .number import NumberFieldGenerator
 from .date import DateFieldGenerator

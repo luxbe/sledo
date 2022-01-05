@@ -8,9 +8,9 @@ from schema import And, Or, Schema, Optional, SchemaError, Use
 from typing import Dict
 import yaml
 
-from sledo.generate.field_generators.base import FieldGenerator
-from sledo.generate.field_generators.reference import ReferenceFieldGenerator
-from sledo.generate.field_generators.schema import SchemaFieldGenerator
+from .field_generators.base import FieldGenerator
+from .field_generators.reference import ReferenceFieldGenerator
+from .field_generators.schema import SchemaFieldGenerator
 from .field_generators import getGeneratorFromFieldType
 
 

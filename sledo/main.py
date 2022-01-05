@@ -1,7 +1,7 @@
 import os
 import shutil
 import click
-from sledo.generate import main as generate_main
+from .generate import main as generate_main
 
 
 @click.group()
@@ -31,6 +31,7 @@ def generate(file: str, outdir: str):
     generate_main(file, outdir)
 
 
+cli.add_command(generate)
+
 if __name__ == '__main__':
-    cli.add_command(generate)
     cli()

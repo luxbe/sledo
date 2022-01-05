@@ -4,9 +4,7 @@ from typing import Any, Dict, Tuple, List
 import os
 import csv
 
-from sledo.generate.field_generators.base import FieldGenerator
-from sledo.generate.field_generators.schema import SchemaFieldGenerator
-
+from .field_generators.base import FieldGenerator
 from .config import loadConfig
 
 

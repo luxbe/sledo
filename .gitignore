@@ -1,6 +1,8 @@
 # Python
 **/__pycache__/
-*.py[cod]
 .vscode
-.pytest_cache/
-out/
+build/
+*.egg-info/
+dist/
+.coverage
+htmlcov/

@@ -1,21 +1,28 @@
-initial: create_order
+# run the process 100 times
 amount: 100
+
+# start at the create_order step
+initial: create_order
 
 steps:
     create_order:
+        # generate one Order 100% of the time
         generate: Order
         next: create_invoice
     create_invoice:
         generate:
-            Invoice: 0.8
+            # generate an Invoice 95% of the time, otherwise don't generate anything
+            Invoice: 0.95
 
 schemas:
     Invoice:
+        # reference to another schema
         order: Order
         date:
             type: date
+            # must not be earlier than the date in order
             min: $order.date
-            max: $order.date
+            max: 2021-12-31
 
     Order:
         amount:

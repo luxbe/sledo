@@ -1,0 +1,20 @@
+bed 
+cupboard
+sideboard
+chair
+bench
+couch
+commode
+dresser
+wardrobe
+desk
+secretary
+bookcase
+table
+lamp
+carpet
+clock
+bookshelf
+mirror
+shoe rack
+armchair

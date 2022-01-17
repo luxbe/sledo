@@ -4,11 +4,13 @@ from .schema import SchemaFieldGenerator
 from .base import FieldGenerator
 from .number import NumberFieldGenerator
 from .date import DateFieldGenerator
+from .stringFromFile import StringFieldGenerator
 
 
 generators: Dict[str, FieldGenerator] = {
     "number": NumberFieldGenerator,
-    "date": DateFieldGenerator
+    "date": DateFieldGenerator,
+    "string_from_file": StringFieldGenerator
 }
 
 

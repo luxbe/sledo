@@ -1,0 +1,92 @@
+# generate base data
+base:
+    Product: 8
+    Customer: 10
+
+# custom generators
+generators:
+    InvoicePriceGenerator: invoice_price.py
+    DeliveryStatusGenerator: delivery_status.py
+    PaymentStatusGenerator: payment_status.py
+    PaymentDateGenerator: payment_date.py
+    DiscountGenerator: discount.py
+
+# start at the create_order step
+initial: create_order
+# run the process 100 times
+amount: 100
+
+# the process steps to walk trough
+steps:
+    create_order:
+        # generate one Order 100% of the time
+        generate: Order
+        next: create_invoice
+    create_invoice:
+        generate:
+            # generate an Invoice 99% of the time, otherwise don't generate anything
+            Invoice: 0.99
+        next: create_delivery
+    create_delivery:
+        generate: Delivery
+        next: create_payment
+    create_payment:
+        generate: Payment
+
+schemas:
+    Payment:
+        order: Order
+        invoice: Invoice
+        delivery: Delivery
+        status: PaymentStatusGenerator
+        date:
+            type: PaymentDateGenerator
+            min: $invoice.date
+            max: $invoice.date
+            delta_min: 2
+            delta_max: 10
+        discount:
+            type: DiscountGenerator # if invoice is paid in 2 weeks -> 2% of invoice amount
+            amount: $invoice.total_price
+            percentage: 2
+            timeframe: 14
+
+    Delivery:
+        order: Order
+        status: DeliveryStatusGenerator # -> "awaiting payment", "sent out", "successful delivery, "not deliverable"
+
+    Invoice:
+        # reference to another schema
+        order: Order
+        total_price: InvoicePriceGenerator
+        date:
+            type: date
+            # must not be earlier than the date in order
+            min: $order.date
+            max: 2021-12-31
+
+    Order:
+        amount:
+            type: number
+            min: 2
+            max: 4
+        product: Product
+        customer: Customer
+        date:
+            type: date
+            min: 2021-12-20
+            max: 2021-12-20
+
+    Customer:
+        address: country
+
+    Product:
+        number:
+            type: number
+            min: 100
+            max: 999
+        price:
+            type: number
+            min: 20
+            max: 50
+            digits: 2

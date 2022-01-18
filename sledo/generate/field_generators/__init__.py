@@ -1,17 +1,18 @@
 from typing import Dict
 
-
+from .name import NameFieldGenerator
 from .schema import SchemaFieldGenerator
 from .base import FieldGenerator
 from .number import NumberFieldGenerator
 from .date import DateFieldGenerator
 from .country import CountryFieldGenerator
-from .reference import to_ref
+from .reference import *
 
 generators: Dict[str, FieldGenerator] = {
     "number": NumberFieldGenerator,
     "date": DateFieldGenerator,
-    "country": CountryFieldGenerator
+    "country": CountryFieldGenerator,
+    "name": NameFieldGenerator
 }
 
 

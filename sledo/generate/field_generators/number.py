@@ -1,5 +1,4 @@
-from typing import Any
-from schema import Or, Schema, Use, Optional
+from schema import Or, Schema, Use, Optional, And
 from random import random
 
 from .reference import to_ref
@@ -10,7 +9,7 @@ class NumberFieldGenerator(FieldGenerator):
     option_schema = Schema({
         "min": Or(Use(to_ref), Use(float)),
         "max": Or(Use(to_ref), Use(float)),
-        Optional("digits", default=0): Use(int)
+        Optional("digits", default=0): And(Use(int), lambda n: n >= 0)
     })
 
     def validate(self):
@@ -29,7 +28,7 @@ class NumberFieldGenerator(FieldGenerator):
 
         return float(f"{((random() * (max - min)) + min):.{digits}f}")
 
-    def val_to_str(self, value: Any) -> str:
+    def val_to_str(self, value) -> str:
         digits: int = self.options["digits"]
 
         return f"{value:.{digits}f}"

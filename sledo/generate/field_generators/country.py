@@ -1,6 +1,5 @@
 from random import randint
 
-from .reference import to_ref
 from .base import FieldGenerator
 
 # Pulled from https://github.com/umpirsky/country-list
@@ -169,7 +168,7 @@ countries = ("Afghanistan",
              "North Korea",
              "North Macedonia",
              "Northern Mariana Islands",
-             "NNorway",
+             "Norway",
              "Oman",
              "Pakistan",
              "Palau",

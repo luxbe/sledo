@@ -49,7 +49,7 @@ schemas:
             type: DiscountGenerator # if invoice is paid in 2 weeks -> 2% of invoice amount
             amount: $invoice.total_price
             percentage: 2
-            timeframe: 14
+            timeframe: 7
 
     Delivery:
         order: Order
@@ -79,6 +79,7 @@ schemas:
 
     Customer:
         address: country
+        name: name
 
     Product:
         number:

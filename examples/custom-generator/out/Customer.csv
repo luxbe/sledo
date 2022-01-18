@@ -1,11 +1,11 @@
-customer_id,address
-1,Hungary
-2,British Indian Ocean Territory
-3,Seychelles
-4,Switzerland
-5,Mexico
-6,Poland
-7,Monaco
-8,St. Helena
-9,Brazil
-10,Kenya
+customer_id,address,name
+1,Uzbekistan,William
+2,Australia,Brandon
+3,Tajikistan,Eric
+4,Israel,Jason
+5,Kiribati,Jose
+6,Bolivia,Mary
+7,Nepal,Bradley
+8,Comoros,Christopher
+9,Azerbaijan,Stephen
+10,Brunei,Alexander

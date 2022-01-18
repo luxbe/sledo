@@ -1,7 +1,7 @@
 
 
 from typing import Dict
-from sledo.generate.field_generators import FieldGenerator, get_value_by_attr_name, to_ref
+from sledo.generate.field_generators import FieldGenerator, to_ref, get_value_by_attr_name
 from schema import Schema, And, Use, Or
 
 

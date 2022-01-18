@@ -16,17 +16,18 @@ class NumberFieldGenerator(FieldGenerator):
     def validate(self):
         self.options = self.option_schema.validate(self.options)
 
-        # if self.options["max"] < self.options["min"]:
-        #     raise SchemaError(
-        #         f"'max' ({self.options['max']}) must be equal or larger than 'min' ({self.options['min']})")
+    def generate(self, **kwargs):
+        self.prepare_options(**kwargs)
+        min: float = self.options["min"]
+        max: float = self.options["max"]
 
-    def generate(self, res={}):
-        options = self.prepare_options(res)
+        if max < min:
+            raise Exception(
+                f"'max' ({self.options['max']}) must be equal or larger than 'min' ({self.options['min']})")
 
-        min: float = options["min"]
-        max: float = options["max"]
+        digits: int = self.options["digits"]
 
-        return (random() * (max - min)) + min
+        return float(f"{((random() * (max - min)) + min):.{digits}f}")
 
     def val_to_str(self, value: Any) -> str:
         digits: int = self.options["digits"]

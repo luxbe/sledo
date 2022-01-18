@@ -12,25 +12,26 @@ class FieldGenerator(object, metaclass=ABCMeta):
         self.validate()
 
     @abstractmethod
-    def validate(self):
+    def generate(self):
         raise NotImplementedError()
 
-    @abstractmethod
-    def generate(self, res: Dict[str, Tuple[Tuple, List[List]]] = {}):
-        raise NotImplementedError()
+    def validate(self):
+        pass
 
     def val_to_str(self, value: Any) -> str:
         return str(value)
 
-    def prepare_options(self, res: Dict[str, Tuple[Tuple, List[List]]]):
-        options = self.options.copy()
+    def prepare_options(self, schema_name: str, res: Dict[str, Tuple[Tuple, List[List]]] = {}, iter_res={}):
         for (key, value) in self.options.items():
             if not isinstance(value, ReferenceFieldGenerator):
                 continue
 
-            schema = res[value.type]
-            index = schema[0].index(value.options["field_attr"])
+            schema = iter_res.get(value.type, res.get(value.type))
+            if schema is None:
+                raise Exception(
+                    f"Cannot find schema: '{value.type}' in current result")
 
-            options[key] = schema[1][-1][index][0]
+            entry = list(filter(
+                lambda header: header[1][0] == value.options["field_attr"], enumerate(schema[0])))[0]
 
-        return options
+            self.options[key] = schema[1][-1][entry[0]]

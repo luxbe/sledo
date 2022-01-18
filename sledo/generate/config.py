@@ -4,6 +4,11 @@ This is the "load_config" module.
 The load config helps to load and validate the sledo configuration files.
 """
 
+import importlib
+from io import TextIOWrapper
+from os import path
+import pathlib
+import sys
 from schema import And, Or, Schema, Optional, SchemaError, Use
 from typing import Dict
 import yaml
@@ -12,6 +17,7 @@ from .field_generators.base import FieldGenerator
 from .field_generators.reference import ReferenceFieldGenerator
 from .field_generators.schema import SchemaFieldGenerator
 from .field_generators import getGeneratorFromFieldType
+from sledo.generate import field_generators
 
 
 class ConfigurationSchema(Schema):
@@ -22,35 +28,48 @@ class ConfigurationSchema(Schema):
         if not _is_config_schema:
             return data
 
-        steps: Dict[str, Dict[str, str]] = data["steps"]
+        steps: Dict[str, Dict[str, str]] = data.get("steps")
+        initial: str = data.get("initial")
+        base: Dict[str, str] = data.get("base")
         schemas: Dict[str, Dict[str, FieldGenerator]] = data["schemas"]
 
-        # validate initial step
-        if steps.get(data["initial"]) is None:
-            raise SchemaError(f"Missing step: '{data['initial']}'")
+        # validate base data
+        if base is not None:
+            for schema_name in base.keys():
+                if schemas.get(schema_name) is None:
+                    raise SchemaError(f"Missing schema: '{schema_name}'")
 
-        # validate next steps
-        for (key, step) in steps.items():
-            next = step.get("next")
-            if next is not None and steps.get(next) is None:
-                raise SchemaError(f"Missing step: '{next}'")
+        if initial is not None and steps is None:
+            raise SchemaError(
+                f"Missing required field 'steps', when using 'initial'")
 
-            generate: str | Dict = step.get("generate")
+        if steps is not None:
+            # validate initial step
+            if steps.get(data["initial"]) is None:
+                raise SchemaError(f"Missing step: '{data['initial']}'")
 
-            if type(generate) is str:
-                if schemas.get(generate) is None:
-                    raise SchemaError(f"Missing schema: '{generate}'")
-            else:
-                total_prob = 0
-                for (schema, prob) in generate.items():
-                    if schemas.get(schema) is None:
-                        raise SchemaError(f"Missing schema: '{schema}'")
+            # validate next steps
+            for (key, step) in steps.items():
+                next = step.get("next")
+                if next is not None and steps.get(next) is None:
+                    raise SchemaError(f"Missing step: '{next}'")
 
-                    total_prob += prob
+                generate: str | Dict = step.get("generate")
 
-                if total_prob > 1:
-                    raise SchemaError(
-                        f"The total probability must not be more than 1 at step: '{key}'")
+                if type(generate) is str:
+                    if schemas.get(generate) is None:
+                        raise SchemaError(f"Missing schema: '{generate}'")
+                else:
+                    total_prob = 0
+                    for (schema, prob) in generate.items():
+                        if schemas.get(schema) is None:
+                            raise SchemaError(f"Missing schema: '{schema}'")
+
+                        total_prob += prob
+
+                    if total_prob > 1:
+                        raise SchemaError(
+                            f"The total probability must not be more than 1 at step: '{key}'")
 
         # validate properties
         for schema in schemas.values():
@@ -80,6 +99,7 @@ class ConfigurationSchema(Schema):
                             if ref_schema_field is None:
                                 raise SchemaError(
                                     f"Attribute '{value.options['field_attr']}' does not exist in schema {ref_field.type}")
+
         return data
 
 
@@ -97,9 +117,15 @@ def to_generator(raw: str | dict):
 
 # The schema of a valid configuration file
 schema = ConfigurationSchema({
-    'initial': str,
-    'amount': Use(int),
-    'steps': {
+    Optional('base'): {
+        str: And(Use(int), lambda x: x >= 0)
+    },
+    Optional('amount'): Use(int),
+    Optional('generators'): {
+        str: str
+    },
+    Optional('initial'): str,
+    Optional('steps'): {
         str: {
             "generate": Or(str, {
                 str: And(Use(float), lambda x: 0 <= x <= 1)
@@ -111,18 +137,34 @@ schema = ConfigurationSchema({
         str: {
             str: And(Or(str, {
                 "type": str,
-                str: str
+                Optional(str): str
             }), Use(to_generator))
         }
     }
 })
 
 
-def validateConfig(config: Dict):
+def validateConfig(config: Dict, MODULE_DIR=None):
+    # load generators before everything else is validated
+    generators: Dict[str, str] = config.get("generators", {})
+
+    if len(generators) > 0:
+        if MODULE_DIR is None:
+            raise Exception(
+                "Cannot import generators without directory path!")
+        sys.path.append(MODULE_DIR)
+
+    # load generators
+    for (name, rel_path) in generators.items():
+        module_name = pathlib.Path(path.join(MODULE_DIR, rel_path)).stem
+        module = importlib.import_module(module_name)
+
+        field_generators.generators[name] = getattr(module, name)
+
     return schema.validate(config)
 
 
-def loadConfig(file: str) -> Dict:
+def loadConfig(file: TextIOWrapper) -> Dict:
     """
     Loads the configuration file and validates its contents
 
@@ -134,8 +176,9 @@ def loadConfig(file: str) -> Dict:
     """
 
     # load and parse the configuration file
-    with open(file) as f:
-        config: Dict = yaml.load(f, Loader=yaml.BaseLoader)
+    config: Dict = yaml.load(file, Loader=yaml.BaseLoader)
 
-        # validate and transform the loaded configuration file
-        return validateConfig(config)
+    dir_path = path.dirname(path.realpath(file.name))
+
+    # validate and transform the loaded configuration file
+    return validateConfig(config, dir_path)

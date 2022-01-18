@@ -2,6 +2,7 @@
 click = "*"
 pyyaml = "*"
 schema = "*"
+numpy = "*"
 
 [dev-packages]
 coverage = "*"

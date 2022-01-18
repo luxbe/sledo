@@ -48,16 +48,16 @@ schemas:
 
   Customer:
     name:
-      type: string_from_file
+      type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\customerNames.txt
     country:
-      type: string_from_file
+      type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\countries.txt
 
     # SOLLTEN PREIS; PRODUKT UND PRODUKTNUMMER ZUSAMMENGEHÖREN? (KEINE DOPPLUNGEN IN ANDEREN KOMBIS?)
   Product:
     name:
-      type: string_from_file
+      type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\productNames.txt
     price:
       type: number

@@ -4,7 +4,7 @@ from .schema import SchemaFieldGenerator
 from .base import FieldGenerator
 from .number import NumberFieldGenerator
 from .date import DateFieldGenerator
-from .string import StringFieldGenerator
+from .stringFromFile import StringFieldGenerator
 
 
 generators: Dict[str, FieldGenerator] = {

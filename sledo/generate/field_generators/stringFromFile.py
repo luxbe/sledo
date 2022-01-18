@@ -28,19 +28,18 @@ class StringFieldGenerator(FieldGenerator):
         with open(source) as textFile:
             arr_no_duplicates = np.loadtxt(textFile, delimiter="\r\n")
 
-        # if reuse == True:
+        if reuse == True:
             lines = open(source).read().splitlines()
             return random.choice(lines)
 
-        # if reuse == False:
+        if reuse == False:
+            unique_element = arr_no_duplicates.pop(1)
+            return unique_element
 
         #     # for i in source:
         #     # dict_no_duplicates[source].append(
         #     #   open(source).read().splitlines())
         #     # print(dict_no_duplicates)
-
-        #     unique_element = arr_no_duplicates.pop(1)
-        #     return(unique_element)
 
         #     # dict = {source: open(source).read().splitlines()}
 

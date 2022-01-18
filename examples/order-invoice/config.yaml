@@ -50,15 +50,18 @@ schemas:
     name:
       type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\customerNames.txt
+      reuse: False
     country:
       type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\countries.txt
+      reuse: True
 
     # SOLLTEN PREIS; PRODUKT UND PRODUKTNUMMER ZUSAMMENGEHÖREN? (KEINE DOPPLUNGEN IN ANDEREN KOMBIS?)
   Product:
     name:
       type: stringFromFile
       source: C:\Programmieren\sledo\examples\order-invoice\productNames.txt
+      reuse: True
     price:
       type: number
       min: 0

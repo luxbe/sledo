@@ -1,7 +1,7 @@
 import os
 import shutil
 import click
-from .generate import main as generate_main
+from generate import main as generate_main
 
 
 @click.group()

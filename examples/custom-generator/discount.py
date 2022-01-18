@@ -16,11 +16,11 @@ class DiscountGenerator(FieldGenerator):
         self.options = self.option_schema.validate(self.options)
 
     def generate(self, schema_name: str, res: Dict, iter_res: Dict):
-        self.prepare_options(schema_name, res, iter_res)
+        options = self.prepare_options(schema_name, res, iter_res)
         # get latest order
-        amount = self.options["amount"]
-        percentage = self.options["percentage"]
-        timeframe = self.options["timeframe"]
+        amount = options["amount"]
+        percentage = options["percentage"]
+        timeframe = options["timeframe"]
 
         order_date = get_value_by_attr_name("date", "Order", res, iter_res)
         payment_date = get_value_by_attr_name(

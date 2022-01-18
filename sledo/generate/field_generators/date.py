@@ -27,21 +27,21 @@ class DateFieldGenerator(FieldGenerator):
                 f"Provide either the 'delta' option or the options 'delta_min' and 'delta_max'")
 
     def generate(self, **kwargs):
-        self.prepare_options(**kwargs)
-        min = self.options["min"]
-        max = self.options["max"]
+        options = self.prepare_options(**kwargs)
+        min = options["min"]
+        max = options["max"]
 
         if max < min:
             raise Exception(
                 f"Option 'max' ({max}) must be equal or larger than 'min' ({min})")
 
-        delta = self.options.get("delta")
+        delta = options.get("delta")
 
         if delta is not None:
             add_days = delta
         else:
-            delta_min = self.options["delta_min"]
-            delta_max = self.options.get("delta_max", delta_min)
+            delta_min = options["delta_min"]
+            delta_max = options.get("delta_max", delta_min)
 
             if delta_max < delta_min:
                 raise Exception(

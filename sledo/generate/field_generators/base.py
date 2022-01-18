@@ -22,7 +22,8 @@ class FieldGenerator(object, metaclass=ABCMeta):
         return str(value)
 
     def prepare_options(self, schema_name: str, res: Dict[str, Tuple[Tuple, List[List]]] = {}, iter_res={}):
-        for (key, value) in self.options.items():
+        options = self.options.copy()
+        for (key, value) in options.items():
             if not isinstance(value, ReferenceFieldGenerator):
                 continue
 
@@ -34,4 +35,6 @@ class FieldGenerator(object, metaclass=ABCMeta):
             entry = list(filter(
                 lambda header: header[1][0] == value.options["field_attr"], enumerate(schema[0])))[0]
 
-            self.options[key] = schema[1][-1][entry[0]]
+            options[key] = schema[1][-1][entry[0]]
+
+        return options

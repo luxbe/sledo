@@ -15,8 +15,8 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/luxbe/sledo",
-    author="luxbe",
-    author_email="luxbe@tutanota.com",
+    author="luxbe, Jakob, Ammar, Melli, Deniz, Larissa",
+    author_email="luxbe@tutanota.com, jakobjonathan@aol.com, ammar@begovic.eu, melina.petersen99@web.de, denizcan.1999er@gmail.com, larissac0504@gmail.com",
     license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",

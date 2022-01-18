@@ -11,11 +11,13 @@ class SchemaFieldGenerator(FieldGenerator):
     def validate(self):
         self.option_schema.validate(self.options)
 
-    def generate(self, schema_name: str, res: Dict, iter_res: Dict):
+    def generate(self, schema_name: str = None, res: Dict = {}, iter_res: Dict = {}):
         schema = iter_res.get(self.type)
         if schema is not None:
+            # choose latest
             index = -1
         else:
+            # choose random
             schema = res.get(self.type)
             if schema is not None:
                 index = randint(0, len(schema[1]) - 1)

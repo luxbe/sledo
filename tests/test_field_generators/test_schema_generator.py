@@ -15,21 +15,21 @@ def test_validation_unknown_keys():
 
 
 def test_generation():
-    step_res = {
-        "Test1": (("id", "amount", "date"), [
-            [(2, str), (6, str), (date(2020, 1, 20), str)],
+    iter_res = {
+        "Test1": ((("id", str), ("amount", str), ("date", str)), [
+            [2, 6, date(2020, 1, 20)],
         ]),
-        "Test2": (("id", "amount", "date"), [
-            [(4, str), (3, str), (date(2020, 2, 18), str)],
+        "Test2": ((("id", str), ("amount", str), ("date", str)), [
+            [4, 3, date(2020, 2, 18)],
         ]),
     }
 
     with pytest.raises(Exception) as ctx:
-        SchemaFieldGenerator(type="Test").generate(step_res)
+        SchemaFieldGenerator(type="Test").generate(iter_res=iter_res)
     assert "Schema 'Test' is not generated yet" in str(ctx.value)
 
     generator = SchemaFieldGenerator(type="Test1")
-    assert generator.generate(step_res) == 2
+    assert generator.generate(iter_res=iter_res) == 2
 
     generator = SchemaFieldGenerator(type="Test2")
-    assert generator.generate(step_res) == 4
+    assert generator.generate(iter_res=iter_res) == 4

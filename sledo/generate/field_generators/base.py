@@ -21,7 +21,7 @@ class FieldGenerator(object, metaclass=ABCMeta):
     def val_to_str(self, value: Any) -> str:
         return str(value)
 
-    def prepare_options(self, schema_name: str, res: Dict[str, Tuple[Tuple, List[List]]] = {}, iter_res={}):
+    def prepare_options(self, schema_name: str = None, res: Dict[str, Tuple[Tuple, List[List]]] = {}, iter_res={}):
         options = self.options.copy()
         for (key, value) in options.items():
             if not isinstance(value, ReferenceFieldGenerator):

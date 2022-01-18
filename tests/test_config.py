@@ -15,8 +15,8 @@ with open("tests/resources/config.yaml") as f:
 def test_validation_no_keys():
     with pytest.raises(SchemaError) as ctx:
         validateConfig({})
-    assert "Missing keys: 'amount', 'initial', 'schemas', 'steps'" in str(
-        ctx.value), "Expected the keys 'amount', 'initial', 'schemas', and 'steps' to be required"
+    assert "Missing key: 'schemas'" in str(
+        ctx.value), "Expected the key 'schemas' to be required"
 
 
 def test_validation_initial():

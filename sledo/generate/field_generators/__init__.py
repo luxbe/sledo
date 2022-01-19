@@ -22,7 +22,19 @@ def getGeneratorFromFieldType(field_type: str, field_options: Dict[str, str]) ->
     return Generator(field_options, field_type)
 
 
-def get_value_by_attr_name(attr_name: str, schema_name: str, res: Dict = {}, iter_res={}):
+def get_schema_by_id(id: int, schema_name: str, res: Dict = {}, iter_res={}):
+    schema_list = iter_res.get(schema_name, res.get(schema_name))
+
+    schema = list(filter(
+        lambda entry: entry[0] == id, schema_list[1]))
+
+    if len(schema) == 0:
+        return None
+
+    return schema[0]
+
+
+def get_value_by_attr_name(attr_name: str, schema_name: str, res: Dict = {}, iter_res={}, id=None):
     schema = iter_res.get(schema_name, res.get(schema_name))
     if schema is None:
         raise Exception(
@@ -42,4 +54,13 @@ def get_value_by_attr_name(attr_name: str, schema_name: str, res: Dict = {}, ite
         # find the referenced schema
         return generator.schema
 
-    return schema[1][-1][entry[0]]
+    if id is None:
+        return schema[1][-1][entry[0]]
+    else:
+        entries = list(
+            filter(lambda entry: entry[0] == id, schema[1]))
+
+        if len(entries) == 0:
+            raise Exception(f"Could not find entry with id '{id}'")
+
+        return entries[0][entry[0]]

@@ -12,7 +12,7 @@ class FieldGenerator(object, metaclass=ABCMeta):
         self.validate()
 
     @abstractmethod
-    def generate(self):
+    def generate(self, schema_name: str, res: Dict, iter_res: Dict):
         raise NotImplementedError()
 
     def validate(self):

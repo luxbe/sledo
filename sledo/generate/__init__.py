@@ -111,7 +111,6 @@ def generate_schema(schema_name: str, config: Dict, res: Dict, iter_res: Dict = 
     # initialize schema entry if it is not present in result yet
     if iter_res.get(schema_name) is None:
         def map_schema_key(key: str) -> str | Tuple:
-            # TODO: return correct val_to_str method
             return (key, schema[key].val_to_str)
 
         iter_res[schema_name] = (

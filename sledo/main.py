@@ -17,7 +17,6 @@ def cli():  # pragma: no cover
 def generate(file: TextIOWrapper, outdir: str):
     # check if the 'out'-directory already exists
     if os.path.isdir(outdir):
-        # TODO: reenable confirmation
         click.confirm(f"The output directory '{outdir}' and ALL ITS CONTENTS will be REMOVED! Continue?",
                       default=False, abort=True, prompt_suffix=": ", show_default=True, err=False)
         # delete the existing directory

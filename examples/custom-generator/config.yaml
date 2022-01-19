@@ -76,7 +76,7 @@ schemas:
         date:
             type: date
             min: 2021-12-20
-            max: 2021-12-20
+            max: 2021-12-27
 
     Customer:
         address: CustomerAddressGenerator

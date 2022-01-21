@@ -17,9 +17,12 @@ def main(file: str, outdir: str):
     config = loadConfig(file)
     data = generateByConfig(config)
 
+    file_count = 0
+
     # write data to disk
     for key in data.keys():
         path = os.path.join(outdir, f"{key}.csv")
+        file_count += 1
 
         with open(path, "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file, dialect='excel')
@@ -31,6 +34,8 @@ def main(file: str, outdir: str):
             # write content
             writer.writerows([[(None if entry is None else headers[index][1](entry)) for (
                 index, entry) in enumerate(row)] for row in schema[1]])
+
+    return f"Successfully generated {file_count} files!"
 
 
 def generateByConfig(config: Dict) -> Dict[str, Tuple[Tuple[Tuple], List]]:

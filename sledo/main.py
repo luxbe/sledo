@@ -28,7 +28,7 @@ def generate(file: TextIOWrapper, outdir: str):
     except OSError as e:
         raise click.UsageError(e)
 
-    generate_main(file, outdir)
+    click.echo(generate_main(file, outdir))
 
 
 cli.add_command(generate)

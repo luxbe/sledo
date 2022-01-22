@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="sledo",
-    version="0.2.2",
+    version="0.2.3",
     description="A simple demodata generator for the command-line.",
     long_description=README,
     long_description_content_type="text/markdown",
